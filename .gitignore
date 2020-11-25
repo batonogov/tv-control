@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 User_manual_AMC_DS65QHD.pdf
+
+# Code
+.vscode/
