@@ -1,8 +1,8 @@
 import telnetlib
 
 
-host='10.21.124.200'
-port='2525'
+host='192.168.0.101'
+port='23'
 
 # Команды
 # Power (ka)
@@ -13,10 +13,11 @@ power_status = 'ka 00 ff' # Подтверждение:
 # a 00 OK00x (Off)
 
 # Display Mode (kb)
+one_picture = 'kb 00 00' # Подтверждение b 00 OK00x
 two_pictures_left_right = 'kb 00 01' # Подтверждение b 00 OK01x
 two_pictures_top_bottom = 'kb 00 02' # Подтверждение b 00 OK02x
 two_pictures_pip = 'kb 00 03' # Подтверждение b 00 OK03x
-four_ictures = 'kb 00 04' # Подтверждение b 00 OK04x
+four_pictures = 'kb 00 04' # Подтверждение b 00 OK04x
 pictures_status = 'kb 00 ff' # Подтверждение:
 # b 00 OK00x (1P)
 # b 00 OK01x (2P_LR)
@@ -209,7 +210,8 @@ def start_command(command, host, port):
     print('Порт:', port)
     connect=telnetlib.Telnet(host, port)
     print('Connection ok')
-    connect.write(b'%s\r' % (power_off.encode('utf-8')))
+    connect.write(b'%s\r' % (command.encode('utf-8')))
     print('Comand sended')
+    print(connect.read_until('a 00 OK01x'.encode('utf-8'), timeout=1))
 
-start_command(power_off, host, port)
+start_command(screen_mute_on, host, port)
