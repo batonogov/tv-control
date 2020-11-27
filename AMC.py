@@ -204,7 +204,7 @@ DOWN_KEY = 'mk 00 04' # k 00 OK04x
 UP_KEY = 'mk 00 05' # k 00 OK05x
 SOURCE_KEY = 'mk 00 06' # k 00 OK06x
 
-def start_command(command, host, port):
+def send_command(command, host, port):
     print('Команда:', command)
     print('Хост:', host)
     print('Порт:', port)
@@ -214,4 +214,4 @@ def start_command(command, host, port):
     print('Comand sended')
     print(connect.read_until('a 00 OK01x'.encode('utf-8'), timeout=1))
 
-start_command(screen_mute_on, host, port)
+send_command(audio_mute_off, host, port)
