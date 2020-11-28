@@ -135,3 +135,4 @@ dmypy.json
 User_manual_AMC_DS65QHD.pdf
 .DS_Store
 tv_list/amc/amc_list
+update-registry.sh
