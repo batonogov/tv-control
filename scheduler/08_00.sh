@@ -1,5 +1,5 @@
 logs=/var/log/cron/start
-path=/etc/cron.AMC_on
+path=/etc/cron.08_00
 
 # Создание директорий в случае их отсутсвия
 if ! [ -d $path ]

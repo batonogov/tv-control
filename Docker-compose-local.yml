@@ -1,8 +1,8 @@
 version: '3.8'
 services:
   daemon:
-    image: localhost:32777/amc_cron
-    container_name: amc_cron
+    image: localhost:32777/tv_cron
+    container_name: tv_cron
     # env_file:
     #   - main.env
     volumes:
