@@ -3,10 +3,10 @@ services:
   cron:
     build: .
     container_name: tv_cron
-    # env_file:
-    #   - main.env
     volumes:
       - ./cron/08_00:/etc/cron.08_00
       - ./cron/21_00:/etc/cron.21_00
       - ./cron/logs:/var/log/cron
+      - ./tv_control:/usr/local/cron/tv_control/
+      - ./tv_list/amc:/usr/local/cron/tv_list/
     restart: always
