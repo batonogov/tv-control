@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  daemon:
+    image: localhost:32777/amc_cron
+    container_name: amc_cron
+    # env_file:
+    #   - main.env
+    volumes:
+      - ./cron/08_00:/etc/cron.08_00
+      - ./cron/21_00:/etc/cron.21_00
+      - ./cron/logs:/var/log/cron
+    restart: always

@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+BASH_ENV=/usr/local/cron/container.env
+MAILTO=root
+HOME=/usr/local/cron/
+
+0 8 * * 1-5 bash 08_00.sh
+0 21 * * 1-5 bash 21_00.sh
