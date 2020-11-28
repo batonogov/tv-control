@@ -213,5 +213,3 @@ def send_command(command, host, port):
     connect.write(b'%s\r' % (command.encode('utf-8')))
     print('Comand sended')
     print(connect.read_until('a 00 OK01x'.encode('utf-8'), timeout=1))
-
-send_command(power_off, host, port)
