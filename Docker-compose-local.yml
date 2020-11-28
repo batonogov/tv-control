@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  daemon:
+  cron:
     image: localhost:32777/tv_cron
     container_name: tv_cron
     # env_file:

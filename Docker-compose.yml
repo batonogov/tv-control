@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  daemon:
+  cron:
     build: .
     container_name: tv_cron
     # env_file:
