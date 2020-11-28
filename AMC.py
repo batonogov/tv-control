@@ -1,8 +1,8 @@
 import telnetlib
 
 
-host='192.168.0.101'
-port='23'
+host='10.21.121.164'
+port='2525'
 
 # Команды
 # Power (ka)
@@ -213,5 +213,3 @@ def send_command(command, host, port):
     connect.write(b'%s\r' % (command.encode('utf-8')))
     print('Comand sended')
     print(connect.read_until('a 00 OK01x'.encode('utf-8'), timeout=1))
-
-send_command(audio_mute_off, host, port)
