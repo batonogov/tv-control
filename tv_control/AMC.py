@@ -1,8 +1,7 @@
-import telnetlib
+# Управляшка телефизором
+import telnetlib, touch10
+from sys import argv
 
-
-host='10.21.121.164'
-port='2525'
 
 # Команды
 # Power (ka)
@@ -106,10 +105,14 @@ audio_mute_status = 'ke 00 ff' # Подтверждение:
 # e 00 OK00x (Mute OFF)
 
 # Audio Volume (kf)
-volume_level = 20 # Указываем желаемый уровешь громкости от 0 до 100
+volume_level = 100 # Указываем желаемый уровешь громкости от 0 до 100
 volume_level_hex = str(hex(volume_level))[2:] # Тут мы преобразуем в hex
-volume_control = 'kf 00 %s' % (volume_level_hex) # f 00 OK00x (Volume = 0, Min.)
-volume_control_status = 'kf 00 ff' 
+if len(volume_level_hex) == 1:
+    volume_control = 'kf 00 0%s' % (volume_level_hex) # f 00 OK00x (Volume = 0, Min.)
+    volume_control_status = 'kf 00 ff'
+elif len(volume_level_hex) == 2:
+    volume_control = 'kf 00 %s' % (volume_level_hex) # f 00 OK00x (Volume = 0, Min.)
+    volume_control_status = 'kf 00 ff' 
 # f 00 OK2Fx (Volume = 47)
 
 # Aspect Ratio (kg)
@@ -212,4 +215,106 @@ def send_command(command, host, port):
     print('Connection ok')
     connect.write(b'%s\r' % (command.encode('utf-8')))
     print('Comand sended')
-    print(connect.read_until('a 00 OK01x'.encode('utf-8'), timeout=1))
+    connect.read_until((command[:6] + 'ff').encode('utf-8'), timeout=1)
+    print(command[:6] + 'ff')
+
+def check_audio_mute_status(host, port):
+    print('Хост:', host)
+    print('Порт:', port)
+    connect=telnetlib.Telnet(host, port)
+    print('Connection ok')
+    connect.write(b'%s\r' % ('ke 00 ff'.encode('utf-8')))
+    print('Comand sended')
+    answer = connect.read_until('e 00 OK01x'.encode('utf-8'), timeout=1)
+    if str(answer) == "b'e 00 OK01x'":
+        print('Status: mute ON')
+        return('ON')
+    else:
+        print('Status: mute OFF') 
+        return('OFF')
+
+def check_volume_level(host, port):
+    send_command(volume_control_status, host, port)
+    return('done')
+
+def check_power_status(host, port):
+    print('Хост:', host)
+    print('Порт:', port)
+    connect=telnetlib.Telnet(host, port)
+    print('Connection ok')
+    connect.write(b'%s\r' % (power_status.encode('utf-8')))
+    print('Comand sended')
+    status = connect.read_until(power_status.encode('utf-8'), timeout=1)
+    print(status)
+    if str(status)[9:11] == '01':
+        print('ТВ Включен')
+        return('ON')
+    elif str(status)[9:11] == '00':
+        print('ТВ Выключен')
+        return('OFF')
+
+def check_picture_status(host, port):
+    print('Хост:', host)
+    print('Порт:', port)
+    connect=telnetlib.Telnet(host, port)
+    print('Connection ok')
+    connect.write(b'%s\r' % (pictures_status.encode('utf-8')))
+    print('Comand sended')
+    status = connect.read_until(pictures_status.encode('utf-8'), timeout=1)
+    print(status)
+    if str(status)[9:11] == '00':
+        print('One picture')
+        return('one')
+
+def check_picture_one_hdmi_status(host, port):
+    print('Хост:', host)
+    print('Порт:', port)
+    connect=telnetlib.Telnet(host, port)
+    print('Connection ok')
+    connect.write(b'%s\r' % (picture_one_status.encode('utf-8')))
+    print('Comand sended')
+    status = connect.read_until(picture_one_status.encode('utf-8'), timeout=1)
+    print(status)
+    if str(status)[9:11] == '02':
+        print('HDMI1')
+        return('HDMI1')
+    elif str(status)[9:11] == '03':
+        print('HDMI2')
+        return('HDMI2')
+
+def start_barco(host, port):
+    if check_power_status(host, port) != 'ON':
+        send_command(power_on, host, port)
+    elif check_picture_status(host, port) != 'one':
+        send_command(one_picture, host, port)
+    elif check_picture_one_hdmi_status(host, port) != 'HDMI1':
+        send_command(picture_one_hdmi1, host, port)
+    send_command(audio_mute_off, host, port)
+
+def start_apple_tv(host, port):
+    if check_power_status(host, port) != 'ON':
+        send_command(power_on, host, port)
+    elif check_picture_status(host, port) != 'one':
+        send_command(one_picture, host, port)
+    elif check_picture_one_hdmi_status(host, port) != 'HDMI2':
+        send_command(picture_one_hdmi2, host, port)
+    send_command(audio_mute_off, host, port)
+
+def audio_mute(arg, host, port):
+    if arg == 'on':
+        send_command(audio_mute_on, host, port)
+    elif arg == 'off':
+        send_command(audio_mute_off, host, port)
+
+def set_volume_level(volume_level, host, port):
+    volume_level_hex = str(hex(volume_level))[2:]
+    volume_control = None
+    if len(volume_level_hex) == 1:
+        volume_control = 'kf 00 0%s' % (volume_level_hex) # f 00 OK00x (Volume = 0, Min.)
+        volume_control_status = 'kf 00 ff'
+        send_command(volume_control, host, port)
+    elif len(volume_level_hex) == 2:
+        volume_control = 'kf 00 %s' % (volume_level_hex) # f 00 OK00x (Volume = 0, Min.)
+        volume_control_status = 'kf 00 ff' 
+    
+    send_command(volume_control, host, port)
